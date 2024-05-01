@@ -88,16 +88,33 @@
  * 
  */
 
+const STUDENT_TYPE_OCHN = 1;
+const STUDENT_TYPE_ZAOCHN = 2;
+
 class Student
 {
+    const STUDENT_TYPE_OCHN = 1; // можно явно добавлять в классы
+    const STUDENT_TYPE_ZAOCHN = 2;
     private $firstName; // недоступное поле извне
     private $lastName; // недоступное поле извне
     public $birthDate; // поле, доступное извне
+    private $type;
     
     public function __construct($firstName, $lastName) // Автоматический метод, который срабатывает при создании объекта
     {
-        $this->lastName = $lastName;
+        $this->lastName = $lastName; // $this показывает на текущий объект
         $this->firstName = $firstName;
+        $this->type = Student::STUDENT_TYPE_OCHN; // Присвоение константы объекту (можно использовать в любом методе) [можно self вместо student]
+    }
+    
+    public static function createOchn($lastName, $firstName) // Фабричный метод, который создаёт экземпляр класса
+    {
+        return new self($lastName, $firstName, self::STUDENT_TYPE_OCHN);
+    }
+
+    public static function createZaochn($lastName, $firstName) // Фабричный метод, который создаёт экземпляр класса
+    {
+        return new self($lastName, $firstName, self::STUDENT_TYPE_ZAOCHN);
     }
     
     public function __toString() // Приводит значение объекта к строке
@@ -153,6 +170,15 @@ $student = new Student('Vasya', 'Pupkin');
 // $student->firstName = 'Vasya'; -- ошибка (обращение к приватному свойству)
 // $student->lastName = 'Pupkin'; -- ошибка (обращение к приватному свойству)
 
-echo $student->test . PHP_EOL;
-echo $student->getAddress('123', 15);
-echo $student . PHP_EOL;
+
+echo Student::STUDENT_TYPE_OCHN . PHP_EOL; // :: - обращение к константе класса (их нет в объекте)
+$student1 = Student::createOchn('Pasha', 'Markov'); // Экземпляр класса, созданный статическим конструктором 
+$student2 = Student::createZaochn('Kirill', 'Markov'); // Экземпляр класса, созданный статическим конструктором 
+print_r($student1);
+
+/* Если в методе не используется $this и он должен быть глобальным, то можно (нужно) его делать статическим.
+ * В статическом методе нет $this и не можем там использовать
+ * 
+ * 
+ * 
+ */
