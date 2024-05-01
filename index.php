@@ -100,14 +100,30 @@ class Student
         $this->firstName = $firstName;
     }
     
-    public function __get($name)
+    public function __toString() // Приводит значение объекта к строке
     {
-        echo $name . PHP_EOL;
+        return '123';
+    }
+
+    public function __call($name, $args) // $name - имя несуществующего метода, $args - массив, аргументы, в который мы передаём в этом методе
+    {
+        echo 'Call' . $name . PHP_EOL;
+        print_r($args);
     }
     
+    public function __invoke() // Срабатывает, когда пытаемся вызвать объект как функцию
+    {
+        echo 'Invoke';
+    }
+    
+    public function __get($name)
+    {
+        return $name . PHP_EOL;
+    }
+
     public function __set($name, $value)
     {
-        echo $name . ' ' . $value . PHP_EOL;
+        $this->$name = $value;
     }
     
     public function getFullName()
@@ -137,5 +153,6 @@ $student = new Student('Vasya', 'Pupkin');
 // $student->firstName = 'Vasya'; -- ошибка (обращение к приватному свойству)
 // $student->lastName = 'Pupkin'; -- ошибка (обращение к приватному свойству)
 
-echo $student->status = 10; // возвратит 'status 10', так как сработает магический метод set.
-echo $student->status . PHP_EOL; // возвратит 'status', так как сработает магический метод get.
+echo $student->test . PHP_EOL;
+echo $student->getAddress('123', 15);
+echo $student . PHP_EOL;
