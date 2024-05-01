@@ -1,9 +1,6 @@
 <?php
 // День первый: Философия ООП
 
-$a = 5; 
-$b = 7;
-
 /* $a -> [ 5 ] -- храниться в памяти
  * $b -> [ 7 ] -- храниться в памяти
  * 
@@ -33,4 +30,112 @@ $b = 7;
  * $b = 10;
  * echo $a; // 10
  * 
+ * -----------------------------------------------
+ * $array = [1, 2, 3];
+ * 
+ * foreach ($array as $key => $value) {
+ *      $value = $value * 2; 
+ * }
+ * 
+ * print_r($array); // [1, 2, 3] -- значения массива не изменятся, так как в foreach происходит копирование по значению
+ * 
+ * 
+ * -----------------------------------------------
+ * 
+ * foreach ($array as $key => &$value) {
+ *      $value = $value * 2; 
+ * }
+ * 
+ * print_r($array); // [2, 4, 6] -- значения массива изменятся, так как в foreach происходит копирование по ссылке
+ * 
+ * -----------------------------------------------
+ * 
+ * $a = new Student(); -- конструкция "new" в памяти создала объект и вернула указатель @ на него, а переменная ссылается на этот указатель
+ * 
+ * $a   ->   [ @ ]                @  ->  { Student#1 }
+ * 
+ * $a ссылается на область памяти, в которой хранится @ (указатель)
+ * 
+ * $b = $a;
+ * 
+ * $a   ->   [ @ ]                @  ->  { Student#1 }
+ * $b   ->   [ @ ]                   /
+ * 
+ * $b = &$a;
+ * 
+ * $a   ->   [ @ ]                @  ->  { Student#1 }
+ * $b   /
+ * 
+ * $b = 7;
+ * 
+ * $a   ->   [ @ ]                @  ->  { Student#1 }
+ * $b   ->   [ 7 ]
+ * 
+ * $a = 5;
+ * 
+ * $a   ->   [ 5 ]                       { Student#1 } -- остаётся в памяти, но на него ничто не ссылается
+ * $b   ->   [ 7 ]
+ * 
  */
+
+
+
+// День второй. Что такое классы, работа с классами.
+
+/* Типизация определяет, что с переменными можно делать.
+ * 
+ * class Student -- заготовка для создания объектов, $student = new Student(); -- экземпляр(объект) класса
+ * 
+ */
+
+class Student
+{
+    private $firstName; // недоступное поле извне
+    private $lastName; // недоступное поле извне
+    public $birthDate; // поле, доступное извне
+    
+    public function __construct($firstName, $lastName) // Автоматический метод, который срабатывает при создании объекта
+    {
+        $this->lastName = $lastName;
+        $this->firstName = $firstName;
+    }
+    
+    public function __get($name)
+    {
+        echo $name . PHP_EOL;
+    }
+    
+    public function __set($name, $value)
+    {
+        echo $name . ' ' . $value . PHP_EOL;
+    }
+    
+    public function getFullName()
+    {
+        return $this->lastName . ' ' . $this->firstName;
+    }
+    
+    public function rename($lastName, $firstName)
+    {
+        $this->lastName = $lastName;
+        $this->firstName = $firstName;
+    }
+    
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+    
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+}
+
+$student = new Student('Vasya', 'Pupkin');
+
+// $student->firstName = 'Vasya'; -- ошибка (обращение к приватному свойству)
+// $student->lastName = 'Pupkin'; -- ошибка (обращение к приватному свойству)
+
+echo $student->status = 10; // возвратит 'status 10', так как сработает магический метод set.
+echo $student->status . PHP_EOL; // возвратит 'status', так как сработает магический метод get.
